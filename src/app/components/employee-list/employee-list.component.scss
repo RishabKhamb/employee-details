@@ -1,0 +1,23 @@
+.custom-row td {
+  display: inline-block;
+  width: 25%;
+}
+
+@media (max-width: 460px) {
+  .custom-row td {
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  .custom-row td {
+    margin-top: 2px;
+    margin-left: 12px !important;
+  }
+
+  .custom-row td .table-cell {
+    display: block;
+    padding: 0;
+  }
+}
