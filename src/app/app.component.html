@@ -1,0 +1,160 @@
+<!-- Employee Details Navbar -->
+<nav class="navbar p-2 background-theme">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <span class="navbar-brand mb-0 h1 fs-3 fs-sm-4 fs-md-5 text-light">Employee List</span>
+    <div>
+      <button type="button" class="btn bg-white theme-text-color btn-sm btn-md-lg p-2" data-bs-toggle="modal"
+        data-bs-target="#exampleModal" (click)="openEmployeeForm()">
+        Add Employee
+      </button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- CURRENT EMPLOYEE LISTING -->
+<app-employee-list [employeeData]="currentEmployees()" (editEmployee)="editEmployee($event)"
+  (deleteEmployee)="deleteEmployee($event)">
+  <h3 class="p-2 table-heading-background">Current Employees</h3>
+</app-employee-list>
+
+<!-- PREVIOUS EMPLOYEE LISTING -->
+<app-employee-list [employeeData]="previousEmployees()" (editEmployee)="editEmployee($event)"
+  (deleteEmployee)="deleteEmployee($event)">
+  <h3 class="p-2 table-heading-background">Previous Employees</h3>
+</app-employee-list>
+
+<!-- Employee Form Modal -->
+<div #exampleModal class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <form>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header background-theme">
+          <h1 class="modal-title fs-5 text-light" id="exampleModalLabel">
+            {{ isEditing ? 'Edit Employee Details' : 'Add Employee Details' }}
+          </h1>
+        </div>
+        <div class="modal-body">
+          <!-- User Name Input -->
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-light"><i class="bi bi-person theme-text-color"></i></span>
+            <input type="text" (change)="empUpdate('name', $event)" class="form-control" placeholder="Enter username"
+              [value]="empForm().name" required />
+          </div>
+          <div *ngIf="formErrors['name']" class="text-danger">{{ formErrors['name'] }}</div>
+
+          <!-- Role Selection -->
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-light"><i class="bi bi-briefcase theme-text-color"></i></span>
+            <select class="form-select" (change)="empUpdate('role', $event)" [value]="empForm().role" required>
+              <option value="" disabled selected>Select Role</option>
+              <option value="frontend">Frontend Developer</option>
+              <option value="fullstack">Fullstack Developer</option>
+              <option value="flutter">Flutter Developer</option>
+              <option value="backend">Backend Developer</option>
+            </select>
+          </div>
+          <div *ngIf="formErrors['role']" class="text-danger">{{ formErrors['role'] }}</div>
+
+          <div class="d-flex gap-2 align-items-start">
+            <!-- From Date Button -->
+            <button id="fromdate" (click)="toggleCalendar('from')" type="button"
+              class="btn btn-outline-secondary flex-grow-1 text-start" [attr.aria-expanded]="isFromDateCalendarVisible"
+              [class.is-invalid]="formErrors['fromDate']">
+              <i class="bi bi-calendar theme-text-color"></i> {{ selectedFromDate ? selectedFromDate :
+              'From' }}
+            </button>
+            <i class="bi bi-arrow-right theme-text-color mt-2 text-center arrow"></i>
+            <!-- To Date Button -->
+            <button id="todate" (click)="toggleCalendar('to')" type="button"
+              class="btn btn-outline-secondary flex-grow-1 text-start" style="flex-basis: 40%"
+              [attr.aria-expanded]="isToDateCalendarVisible" [class.is-invalid]="formErrors['toDate']">
+              <i class="bi bi-calendar theme-text-color "></i> {{ selectedToDate ? selectedToDate : 'To' }}
+            </button>
+          </div>
+          <div *ngIf="formErrors['fromDate'] || formErrors['toDate']" class="d-flex justify-content-between">
+            <div *ngIf="formErrors['fromDate']" class="text-danger" style="font-size: 0.875rem; margin-top: 5px;">
+              {{ formErrors['fromDate'] }}
+            </div>
+            <div *ngIf="formErrors['toDate']" class="text-danger" style="font-size: 0.875rem; margin-top: 5px;">
+              {{ formErrors['toDate'] }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light cancel-btn" data-bs-dismiss="modal" (click)="closeModal()">
+            Close
+          </button>
+          <button type="submit" class="btn text-light background-theme" (click)="submitEmployees()">{{ isEditing ? 'Save
+            changes' :
+            'Save' }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- From Date Calendar -->
+    <div *ngIf="isFromDateCalendarVisible" class="modal-backdrop show" (click)="closeDateCalendar('fromDate')"></div>
+    <div *ngIf="isFromDateCalendarVisible" class="card mt-2 employee-calendar">
+      <div class="card-header">
+        <div class="row my-2">
+          <div class="col-6">
+            <button class="btn btn-light btn-blue-border w-100 " (click)="setToday()">Today</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-light btn-blue-border w-100" (click)="nextMonday()">Next Monday</button>
+          </div>
+        </div>
+        <div class="row my-1">
+          <div class="col-6">
+            <button class="btn btn-light btn-blue-border w-100" (click)="nextTuesday()">Next Tuesday</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-light btn-blue-border w-100" (click)="afterOneWeek()">After 1 Week</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="card-body d-flex justify-content-center align-items-center">
+        <ngb-datepicker [(ngModel)]="fromDateModel" name="fromDate"
+          (ngModelChange)="updateDate(fromDateModel, 'fromDate')">
+        </ngb-datepicker>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center flex-wrap">
+        <div class="d-flex align-items-center flex-wrap" style="flex: 1">
+        </div>
+        <div>
+          <button class="btn btn-light cancel-btn" (click)="closeDateCalendar('fromDate')">Cancel</button>
+          <button class="btn text-light background-theme ms-2" (click)="saveDate('fromDate')">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- To Date Calendar -->
+    <div *ngIf="isToDateCalendarVisible" class="modal-backdrop show" (click)="closeDateCalendar('toDate')"></div>
+    <div *ngIf="isToDateCalendarVisible" class="card mt-2 employee-calendar">
+      <div class="card-header">
+        <div class="row my-1">
+          <div class="col-6">
+            <button class="btn btn-light btn-blue-border w-100">No date</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-light btn-blue-border w-100" (click)="setToToday()">Today</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body d-flex justify-content-center align-items-center">
+        <ngb-datepicker [(ngModel)]="toDateModel" name="toDate" (ngModelChange)="updateDate(toDateModel, 'toDate')">
+        </ngb-datepicker>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center flex-wrap">
+        <div class="d-flex align-items-center flex-wrap" style="flex: 1">
+        </div>
+        <div>
+          <button class="btn btn-light cancel-btn" (click)="closeDateCalendar('toDate')">Cancel</button>
+          <button class="btn text-light background-theme ms-2" (click)="saveDate('toDate')">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

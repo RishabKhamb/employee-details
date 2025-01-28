@@ -1,0 +1,66 @@
+.text-danger {
+  font-size: 0.875rem;
+  margin-top: 5px;
+  color: #dc3545;
+}
+
+.background-theme {
+  background-color: #1da1f2;
+}
+
+.theme-text-color {
+  color: #1da1f2;
+}
+#fromdate {
+  flex-basis: 40%;
+}
+.cancel-btn {
+  background-color: #edf8ff;
+  color: #1da1f2;
+}
+
+i.calendar-color {
+  color: #1da1f2 !important;
+}
+
+i.arrow {
+  flex-basis: 10%;
+}
+
+.table-heading-background {
+  background-color: #f2f2f2;
+}
+
+.btn-blue-border {
+  border: 1px solid #1da1f2;
+  color: #000;
+}
+
+.btn-blue-border:hover {
+  background-color: #1da1f2;
+  color: white;
+}
+
+.employee-calendar {
+  width: 300px;
+  margin: 0 auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1061;
+}
+
+.modal-backdrop.show {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+}
+
+.modal {
+  z-index: 1060;
+}
